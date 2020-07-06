@@ -66,7 +66,7 @@ public class CsvUtils {
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null) {
                 list.add(nextLine);
-                System.out.println(Arrays.toString(nextLine));
+                //System.out.println(Arrays.toString(nextLine));
             }
 
 

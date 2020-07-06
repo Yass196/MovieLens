@@ -16,5 +16,10 @@ public class Movie {
     String movie_title;
     List <String> genre;
 
-
+    public int getId() {
+        return movie_id;
+    }
+    public String getTitle() {
+        return movie_title;
+    }
 }

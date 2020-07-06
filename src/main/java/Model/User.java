@@ -18,4 +18,11 @@ public class User {
     int age;
     String occupation;
     String zip_code;
+
+    public int getId() {
+        return user_id;
+    }
+    public int getAge() {
+        return age;
+    }
 }
