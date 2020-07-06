@@ -10,7 +10,8 @@ import java.util.List;
 public class CsvUtils {
 
     public List<User> getUsers() throws Exception {
-        List<String[]> data = readCsv();
+        String path = "C:/Users/yassi/Downloads/ml-100k/ml-100k/u.item";
+        List<String[]> data = readCsv(path);
         List<User> users = new ArrayList<>();
         User user;
         for (String[] instance : data) {
@@ -22,8 +23,8 @@ public class CsvUtils {
     }
 
     @SuppressWarnings("resource")
-    public List<String[]> readCsv() throws Exception {
-        CSVReader reader = new CSVReader(new FileReader("C:/Users/yassi/Downloads/ml-100k/ml-100k/u.item"), '|', '"', 1);
+    public List<String[]> readCsv(String path) throws Exception {
+        CSVReader reader = new CSVReader(new FileReader(path), '|', '"', 1);
 
         //Read CSV line by line
         String[] nextLine;
