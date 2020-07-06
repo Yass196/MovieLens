@@ -2,33 +2,19 @@ package Model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class Movie {
+    public Movie(int movie_id, String movie_title,List<String> genre) {
+        this.movie_id = movie_id;
+        this.movie_title = movie_title;
+        this.genre = genre;
+    }
 
     int movie_id;
     String movie_title;
-    String release_date;
-    String video_release_date;
-    String imdb_url;
-    Boolean unknown;
-    Boolean action;
-    Boolean adventure;
-    Boolean animation;
-    Boolean childrens;
-    Boolean comedy;
-    Boolean crime;
-    Boolean documentary;
-    Boolean drama;
-    Boolean fantasy;
-    Boolean film_noir;
-    Boolean horror;
-    Boolean musical;
-    Boolean mystery;
-    Boolean romance;
-    Boolean sci_fi;
-    Boolean thriller;
-    Boolean war;
-    Boolean western;
+    List <String> genre;
 
 
 }

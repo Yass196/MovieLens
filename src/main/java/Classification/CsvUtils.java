@@ -1,6 +1,8 @@
 package Classification;
+import Model.Movie;
 import Model.User;
 import com.opencsv.CSVReader;
+
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,22 +11,38 @@ import java.util.List;
 
 public class CsvUtils {
 
-    public List<User> getUsers() throws Exception {
-        String path = "C:/Users/yassi/Downloads/ml-100k/ml-100k/u.item";
+    public static List<User> getUsers() throws Exception {
+        String path = "Données TP1-20200706/users.dat";
         List<String[]> data = readCsv(path);
         List<User> users = new ArrayList<>();
         User user;
         for (String[] instance : data) {
-            user = new User(Integer.parseInt(instance[0]), Integer.parseInt(instance[1]), instance[2], instance[3], instance[4]);
+            user = new User(Integer.parseInt(instance[0]), instance[1], Integer.parseInt(instance[2]), instance[3], instance[4]);
             users.add(user);
         }
         return users;
 
     }
 
+    public static List<Movie> getMovies()throws Exception{
+        String path = "Données TP1-20200706/movies.dat";
+        List<String[]> data = readCsv(path);
+        List<Movie> movies = new ArrayList<>();
+        List<String> genre = new ArrayList<>();
+        Movie movie;
+
+        for (String[] instance : data) {
+            genre = Arrays.asList(instance[2].split("|"));
+            movie = new Movie(Integer.parseInt(instance[0]), instance[1], genre);
+            movies.add(movie);
+        }
+        return movies;
+
+    }
+
     @SuppressWarnings("resource")
-    public List<String[]> readCsv(String path) throws Exception {
-        CSVReader reader = new CSVReader(new FileReader(path), '|', '"', 1);
+    public static List<String[]> readCsv(String path) throws Exception {
+        CSVReader reader = new CSVReader(new FileReader(path), ':', '"', 0);
 
         //Read CSV line by line
         String[] nextLine;
@@ -41,4 +59,11 @@ public class CsvUtils {
 
         return list;
     }
+
+    public static void main(String[] args) throws Exception{
+        getMovies();
+        getUsers();
+    }
+
+
 }
