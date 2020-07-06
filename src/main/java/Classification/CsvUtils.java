@@ -1,4 +1,5 @@
 package Classification;
+
 import Model.Movie;
 import Model.Rating;
 import Model.User;
@@ -25,7 +26,7 @@ public class CsvUtils {
 
     }
 
-    public static List<Movie> getMovies()throws Exception{
+    public static List<Movie> getMovies() throws Exception {
         String path = "Données TP1-20200706/movies.dat";
         List<String[]> data = readCsv(path);
         List<Movie> movies = new ArrayList<>();
@@ -41,14 +42,13 @@ public class CsvUtils {
 
     }
 
-    public static List<Rating> getRatings()throws Exception{
-        String path = "Données TP1-20200706/movies.dat";
+    public static List<Rating> getRatings() throws Exception {
+        String path = "Données TP1-20200706/ratings.dat";
         List<String[]> data = readCsv(path);
         List<Rating> ratings = new ArrayList<>();
         Rating rating;
-
         for (String[] instance : data) {
-            rating = new Rating(Integer.parseInt(instance[0]),Integer.parseInt(instance[1]),
+            rating = new Rating(Integer.parseInt(instance[0]), Integer.parseInt(instance[1]),
                     Integer.parseInt(instance[2]));
             ratings.add(rating);
         }
@@ -67,7 +67,6 @@ public class CsvUtils {
             if (nextLine != null) {
                 list.add(nextLine);
                 System.out.println(Arrays.toString(nextLine));
-                System.out.println(nextLine[0]);
             }
 
 
@@ -75,11 +74,4 @@ public class CsvUtils {
 
         return list;
     }
-
-    public static void main(String[] args) throws Exception{
-        getMovies();
-        getUsers();
-    }
-
-
 }
