@@ -1,5 +1,6 @@
 package Classification;
 import Model.Movie;
+import Model.Rating;
 import Model.User;
 import com.opencsv.CSVReader;
 
@@ -37,6 +38,21 @@ public class CsvUtils {
             movies.add(movie);
         }
         return movies;
+
+    }
+
+    public static List<Rating> getRatings()throws Exception{
+        String path = "Données TP1-20200706/movies.dat";
+        List<String[]> data = readCsv(path);
+        List<Rating> ratings = new ArrayList<>();
+        Rating rating;
+
+        for (String[] instance : data) {
+            rating = new Rating(Integer.parseInt(instance[0]),Integer.parseInt(instance[1]),
+                    Integer.parseInt(instance[2]));
+            ratings.add(rating);
+        }
+        return ratings;
 
     }
 
