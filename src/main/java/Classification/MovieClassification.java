@@ -4,90 +4,99 @@ import Model.Movie;
 import Model.Rating;
 import Model.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MovieClassification {
 
-    public static int [] [] ratingMatrix()throws Exception{
-        int [] [] ratingMat = new int[6040][3883];
-        List<Rating> data = CsvUtils.getRatings();
-        for (Rating rating : data){
-            ratingMat[rating.getUser_id()-1][rating.getMovie_id()-1] = rating.getRating();
+    public static List<Rating> ratings;
+    public static List<User> users;
+    public static List<Movie> movies;
+    public static int current_user_id;
+    public static int[][] rating_matrix;
+
+
+    public static int[][] ratingMatrix() throws Exception {
+        int[][] ratingMat = new int[6040][3883];
+        ratings = CsvUtils.getRatings();
+        for (Rating rating : ratings) {
+            ratingMat[rating.getUser_id() - 1][rating.getMovie_id() - 1] = rating.getRating();
         }
         return ratingMat;
     }
 
-    public static List<User> similarUsers(int[][] tab) throws Exception {
-        List<User> similarUsers = new ArrayList<>();
-        List<User> user = CsvUtils.getUsers();
-
-        for (int i = 1; i <= 3883; i++) {
-            double cosV1V2 = similarity(tab[50], tab[i]);
-            if(cosV1V2 >= 0.28 && similarUsers.size() < 10){
-                similarUsers.add(user.get(i));
-            }
-            
+    public static double similarity(int[] vector1, int[] vector2) {
+        int somme = 0;
+        double cardV1 = 0.0;
+        double cardV2 = 0.0;
+        for (int i = 0; i < vector1.length; i++) {
+            somme += vector1[i] * vector2[i];
+            cardV1 += Math.pow(vector1[i], 2.0);
+            cardV2 += Math.pow(vector2[i], 2.0);
         }
-        return similarUsers;
+        return somme / (Math.sqrt(cardV1 * cardV2));
+
+    }
+
+    public static List<User> similarUsers(int[][] tab, int user_id) throws Exception {
+        List<Double> similarityArray = new ArrayList<>();
+        users = CsvUtils.getUsers();
+        current_user_id = user_id;
+
+        double cosV1V2;
+
+        for (int i = 0; i < 6040; i++) {
+            cosV1V2 = similarity(tab[current_user_id], tab[i]);
+            similarityArray.add(cosV1V2);
+
+        }
+
+        return nMaxOfAList(similarityArray);
     }
 
     public static List<Movie> recomendations(List<User> similarusers) throws Exception {
         List<Movie> recommandentMovies = new ArrayList<>();
-        List<Integer> userRecommandedMovies = new ArrayList<>();
-        List<Rating> movieRecommanded = CsvUtils.getRatings();
-        List<Movie> Movies = CsvUtils.getMovies();
-        userRecommandedMovies = deleteRecomendedMovies();
+        List<Integer> userRatedMovies;
+        movies = CsvUtils.getMovies();
         for (User dataUser : similarusers) {
-            for (Rating data : movieRecommanded) {
-                if (data.getUser_id() == dataUser.getId() && !userRecommandedMovies.contains(data.getMovie_id())) {
-                    recommandentMovies.add(Movies.get(data.getMovie_id()));
+            for (int i=0; i<3883; i++){
+                if(rating_matrix[current_user_id][i]==0 && rating_matrix[dataUser.getId()][i]!=0){
+                    recommandentMovies.add(movies.get(i));
                 }
             }
+
         }
-        Set<Movie> mySet = new HashSet<Movie>(recommandentMovies);
- 
+        Set<Movie> mySet = new HashSet<>(recommandentMovies);
         // Créer une Nouvelle ArrayList à partir de Set
         List<Movie> recommandedMovies = new ArrayList<Movie>(mySet);
         return recommandedMovies;
     }
 
-    public static List<Integer> deleteRecomendedMovies() throws Exception {
-        List<Integer> userRecommandedMovies = new ArrayList<>();
-        List<Rating> movieRecommanded = CsvUtils.getRatings();
-            for (Rating data : movieRecommanded) {
-                if (data.getUser_id() == 50) {
-                    userRecommandedMovies.add(data.getMovie_id());
-                }
-            }
-            return userRecommandedMovies;
-    }
 
-    public static double similarity(int [] vector1, int [] vector2 ){
-        int somme = 0;
-        double cardV1 = 0.0;
-        double cardV2 = 0.0;
-        for(int i = 0; i<vector1.length; i++){
-            somme += vector1[i]*vector2[i];
-            cardV1 += Math.pow(vector1[i], 2.0);
-            cardV2 += Math.pow(vector2[i], 2.0);
+    public static List<User> nMaxOfAList(List<Double> similarityArray) {
+        int index;
+        double max;
+        List<User> similarUsers = new ArrayList<>();
+        similarityArray.remove(current_user_id);
+        for (int i = 0; i < 10; i++) {
+            max = Collections.max(similarityArray);
+            System.out.println(max);
+            index = similarityArray.indexOf(max);
+            similarUsers.add(users.get(index));
+            similarityArray.remove(index);
         }
-        return somme/(Math.sqrt(cardV1*cardV2));
-
+        return similarUsers;
     }
-    public static void main(String Args [])throws Exception{
-<<<<<<< HEAD
-        int [][] tab = ratingMatrix();
-       System.out.println(similarity(tab[0], tab[1]));
-=======
-        //int [] [] tab = ratingMatrix();
-        List<User> similarusers = new ArrayList<>();
-        List<Movie> recommandedMovies = new ArrayList<>();
-        similarusers = similarUsers(ratingMatrix());
-        for (User data : similarusers){
-            System.out.println(data.getId()+" | "+data.getAge());
+
+
+    public static void main(String Args[]) throws Exception {
+
+        rating_matrix = ratingMatrix();
+        List<User> similarusers;
+        List<Movie> recommandedMovies;
+        //tester avec l'user 14
+        similarusers = similarUsers(ratingMatrix(), 14);
+        for (User data : similarusers) {
+            System.out.println(data.getId() + " | " + data.getAge());
         }
         recommandedMovies = recomendations(similarusers);
         for (Movie data : recommandedMovies) {
@@ -95,11 +104,9 @@ public class MovieClassification {
         }
         System.out.println("Nombre des movies : " + recommandedMovies.size());
         System.out.println("Nombre des utilisateurs similaire : " + similarusers.size());
-        
-        //System.out.println(similarity(tab[1], tab[2]));
->>>>>>> 9c07a5125f1f4694e3e4ebe93286dce0adf5ba7f
-    }
 
+
+    }
 
 
 }
