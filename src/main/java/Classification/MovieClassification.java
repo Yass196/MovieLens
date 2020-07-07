@@ -23,9 +23,10 @@ public class MovieClassification {
     public static List<User> similarUsers(int[][] tab) throws Exception {
         List<User> similarUsers = new ArrayList<>();
         List<User> user = CsvUtils.getUsers();
+
         for (int i = 1; i <= 3883; i++) {
             double cosV1V2 = similarity(tab[50], tab[i]);
-            if(cosV1V2 >= 0.30){
+            if(cosV1V2 >= 0.28 && similarUsers.size() < 10){
                 similarUsers.add(user.get(i));
             }
             
