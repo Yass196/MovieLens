@@ -22,11 +22,7 @@ public class MovieClassification {
         double cardV1 = 0.0;
         double cardV2 = 0.0;
         for(int i = 0; i<vector1.length; i++){
-           /* if(vector1[i] ==null)
-                vector1[i] = 0;
-            if(vector2[i]==null)
-                vector2[i] = 0;
-           */ somme += vector1[i]*vector2[i];
+            somme += vector1[i]*vector2[i];
             cardV1 += Math.pow(vector1[i], 2.0);
             cardV2 += Math.pow(vector2[i], 2.0);
         }
@@ -34,8 +30,8 @@ public class MovieClassification {
 
     }
     public static void main(String Args [])throws Exception{
-        int [] [] tab = ratingMatrix();
-       System.out.println(similarity(tab[10], tab[19]));
+        int [][] tab = ratingMatrix();
+       System.out.println(similarity(tab[0], tab[1]));
     }
 
 
