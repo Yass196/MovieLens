@@ -35,34 +35,34 @@ public class MovieClassification {
     }
 
     public static List<Movie> recomendations(List<User> similarusers) throws Exception {
-        List<Movie> recomendentMovies = new ArrayList<>();
-        List<Integer> userRecomendedMovies = new ArrayList<>();
-        List<Rating> movieRecomended = CsvUtils.getRatings();
+        List<Movie> recommandentMovies = new ArrayList<>();
+        List<Integer> userRecommandedMovies = new ArrayList<>();
+        List<Rating> movieRecommanded = CsvUtils.getRatings();
         List<Movie> Movies = CsvUtils.getMovies();
-        userRecomendedMovies = deleteRecomendedMovies();
+        userRecommandedMovies = deleteRecomendedMovies();
         for (User dataUser : similarusers) {
-            for (Rating data : movieRecomended) {
-                if (data.getUser_id() == dataUser.getId() && !userRecomendedMovies.contains(data.getMovie_id())) {
-                    recomendentMovies.add(Movies.get(data.getMovie_id()));
+            for (Rating data : movieRecommanded) {
+                if (data.getUser_id() == dataUser.getId() && !userRecommandedMovies.contains(data.getMovie_id())) {
+                    recommandentMovies.add(Movies.get(data.getMovie_id()));
                 }
             }
         }
-        Set<Movie> mySet = new HashSet<Movie>(recomendentMovies);
+        Set<Movie> mySet = new HashSet<Movie>(recommandentMovies);
  
         // Créer une Nouvelle ArrayList à partir de Set
-        List<Movie> recomendedMovies = new ArrayList<Movie>(mySet);
-        return recomendedMovies;
+        List<Movie> recommandedMovies = new ArrayList<Movie>(mySet);
+        return recommandedMovies;
     }
 
     public static List<Integer> deleteRecomendedMovies() throws Exception {
-        List<Integer> userRecomendedMovies = new ArrayList<>();
-        List<Rating> movieRecomended = CsvUtils.getRatings();
-            for (Rating data : movieRecomended) {
+        List<Integer> userRecommandedMovies = new ArrayList<>();
+        List<Rating> movieRecommanded = CsvUtils.getRatings();
+            for (Rating data : movieRecommanded) {
                 if (data.getUser_id() == 50) {
-                    userRecomendedMovies.add(data.getMovie_id());
+                    userRecommandedMovies.add(data.getMovie_id());
                 }
             }
-        return userRecomendedMovies;
+            return userRecommandedMovies;
     }
 
     public static double similarity(int [] vector1, int [] vector2 ){
@@ -84,16 +84,16 @@ public class MovieClassification {
     public static void main(String Args [])throws Exception{
         //int [] [] tab = ratingMatrix();
         List<User> similarusers = new ArrayList<>();
-        List<Movie> recomendedMovies = new ArrayList<>();
+        List<Movie> recommandedMovies = new ArrayList<>();
         similarusers = similarUsers(ratingMatrix());
         for (User data : similarusers){
             System.out.println(data.getId()+" | "+data.getAge());
         }
-        recomendedMovies = recomendations(similarusers);
-        for (Movie data : recomendedMovies){
+        recommandedMovies = recomendations(similarusers);
+        for (Movie data : recommandedMovies) {
             System.out.println("Recomended Movie | " + data.getTitle());
         }
-        System.out.println("Nombre des movies : " + recomendedMovies.size());
+        System.out.println("Nombre des movies : " + recommandedMovies.size());
         System.out.println("Nombre des utilisateurs similaire : " + similarusers.size());
         
         //System.out.println(similarity(tab[1], tab[2]));
