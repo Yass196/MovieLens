@@ -13,6 +13,8 @@ public class MovieClassification {
     public static List<Movie> movies;
     public static int current_user_id;
     public static int[][] rating_matrix;
+    public static List<Double> userSimilarities;
+
 
 
     public static int[][] ratingMatrix() throws Exception {
@@ -49,13 +51,12 @@ public class MovieClassification {
             similarityArray.add(cosV1V2);
 
         }
-
-        return nMaxOfAList(similarityArray);
+        userSimilarities=similarityArray;
+        return nMaxOfUserSimilarity(similarityArray);
     }
 
     public static List<Movie> recomendations(List<User> similarusers) throws Exception {
         List<Movie> recommandentMovies = new ArrayList<>();
-        List<Integer> userRatedMovies;
         movies = CsvUtils.getMovies();
         for (User dataUser : similarusers) {
             for (int i=0; i<3883; i++){
@@ -68,15 +69,16 @@ public class MovieClassification {
         Set<Movie> mySet = new HashSet<>(recommandentMovies);
         // Créer une Nouvelle ArrayList à partir de Set
         List<Movie> recommandedMovies = new ArrayList<Movie>(mySet);
-        return recommandedMovies;
+        return similarItems(recommandedMovies, similarusers);
     }
 
 
-    public static List<User> nMaxOfAList(List<Double> similarityArray) {
+    public static List<User> nMaxOfUserSimilarity(List<Double> similarityArray) {
         int index;
         double max;
         List<User> similarUsers = new ArrayList<>();
         similarityArray.remove(current_user_id);
+        System.out.println("\nTop 10 similarities :");
         for (int i = 0; i < 10; i++) {
             max = Collections.max(similarityArray);
             System.out.println(max);
@@ -87,23 +89,62 @@ public class MovieClassification {
         return similarUsers;
     }
 
+    public static List<Movie> similarItems (List<Movie> recommandations, List<User> similarUsers){
+        double sommeX;
+        double sommeY;
+        double movieWeight;
+        double max;
+        int index;
+        List<Double> moviesWeight = new ArrayList<>();
+        List<Movie> finalRecommandedMovies = new ArrayList<>();
+        for(Movie movie : recommandations){
+            sommeX = 0.0;
+            sommeY = 0.0;
+            for (User user : similarUsers){
+                sommeX = sommeX + rating_matrix[user.getId()-1][movie.getId()-1]*userSimilarities.get(user.getId());
+                sommeY = sommeY + userSimilarities.get(user.getId());
+            }
+            movieWeight = sommeX/sommeY;
+            moviesWeight.add(movieWeight);
+        }
+        for (int i = 0; i < 5; i++) {
+            max = Collections.max(moviesWeight);
+            System.out.println("\nmovie weight (global evaluation) : "+max);
+            index = moviesWeight.indexOf(max);
+            finalRecommandedMovies.add(movies.get(index));
+            moviesWeight.remove(index);
+        }
+        return finalRecommandedMovies;
+
+    }
+
+
+
 
     public static void main(String Args[]) throws Exception {
 
         rating_matrix = ratingMatrix();
         List<User> similarusers;
         List<Movie> recommandedMovies;
-        //tester avec l'user 14
-        similarusers = similarUsers(ratingMatrix(), 14);
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Welcome to our recommandation system \nintroduce the user id to get the similar recommandation\nthe user id is a number between 1 and 6040\nuser id :");
+        int commande = reader.nextInt();
+        while(commande < 1 || commande >6040) {
+            System.out.println("error the user id should be between 1 and 6040");
+            commande = reader.nextInt();
+        }
+        similarusers = similarUsers(ratingMatrix(), commande);
+        System.out.println("\nSimilar users are : \n id | age ");
         for (User data : similarusers) {
             System.out.println(data.getId() + " | " + data.getAge());
         }
         recommandedMovies = recomendations(similarusers);
+        System.out.println("\nRecommanded movies are : \n");
         for (Movie data : recommandedMovies) {
             System.out.println("Recomended Movie | " + data.getTitle());
         }
-        System.out.println("Nombre des movies : " + recommandedMovies.size());
-        System.out.println("Nombre des utilisateurs similaire : " + similarusers.size());
+        System.out.println("\nmovies recommanded number : " + recommandedMovies.size());
+        System.out.println("\nsimilar users number : " + similarusers.size());
 
 
     }
